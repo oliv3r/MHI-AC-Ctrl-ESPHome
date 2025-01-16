@@ -157,8 +157,11 @@ public:
         }
 
         int ret = mhi_ac_ctrl_core.loop(100);
-        if (ret < 0)
-            ESP_LOGW("mhi_ac_ctrl", "mhi_ac_ctrl_core.loop error: %i", ret);
+        if (ret < 0) {
+            this->status_set_error(str_sprintf("ERROR: mhi_ac_ctrl_core.loop error: %i", ret).c_str());
+            }
+        else
+            this->status_clear_error();
     }
     // static time_t _defaultTimeCB(void) {
     //     // Use the synchronized time from Home Assistant
