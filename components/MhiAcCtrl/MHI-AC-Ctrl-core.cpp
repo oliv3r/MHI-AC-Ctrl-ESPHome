@@ -122,6 +122,7 @@ void MHI_AC_Ctrl_Core::set_frame_size(byte framesize) {
     frameSize = framesize;
 }
 
+#include "esphome/core/log.h"
 int MHI_AC_Ctrl_Core::loop(uint max_time_ms) {
   const byte opdataCnt = sizeof(opdata) / sizeof(byte) / 2;
   static byte opdataNo = 0;               //
@@ -260,6 +261,24 @@ static byte MOSI_frame[33];
       MOSI_frame[byte_cnt] = MOSI_byte;
     }
   }
+  uint8_t *frame = MISO_frame;
+  ESP_LOGD("MHIACCTRL",
+           "MISO Frame: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X "
+           "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+           frame[0], frame[1], frame[2], frame[3], frame[4], frame[5], frame[6], frame[7], frame[8], frame[9],
+           frame[10], frame[11], frame[12], frame[13], frame[14], frame[15], frame[16], frame[17], frame[18],
+           frame[19]);
+  frame = MOSI_frame;
+  ESP_LOGD("MHIACCTRL",
+           "MOSI Frame: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X "
+           "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+           frame[0], frame[1], frame[2], frame[3], frame[4], frame[5], frame[6], frame[7], frame[8], frame[9],
+           frame[10], frame[11], frame[12], frame[13], frame[14], frame[15], frame[16], frame[17], frame[18],
+           frame[19]);
+//  ESP_LOGD(TAG, " | 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+//           frame[20], frame[21], frame[22], frame[23], frame[24], frame[25], frame[26], frame[27], frame[28],
+//           frame[29], frame[30], frame[31], frame[32]);
+
 
   checksum = calc_checksum(MOSI_frame);
   if (((MOSI_frame[SB0] & 0xfe) != 0x6c) | (MOSI_frame[SB1] != 0x80) | (MOSI_frame[SB2] != 0x04))
