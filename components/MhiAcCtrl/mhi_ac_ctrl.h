@@ -156,9 +156,29 @@ public:
             ESP_LOGD("mhi_ac_ctrl", "did not receive a room_temp_api value, using IU temperature sensor");
         }
 
-        int ret = mhi_ac_ctrl_core.loop(100);
+  static byte MOSI_frame[33];
+  static byte MISO_frame[33] = { 0xA9, 0x00, 0x07, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x22 };
+        int ret = mhi_ac_ctrl_core.loop(100, MISO_frame, MOSI_frame);
         if (ret < 0)
-            ESP_LOGW("mhi_ac_ctrl", "mhi_ac_ctrl_core.loop error: %i", ret);
+            ESP_LOGV("mhi_ac_ctrl", "mhi_ac_ctrl_core.loop error: %i", ret);
+
+  uint8_t *frame = MISO_frame;
+  ESP_LOGD("MHIACCTRL",
+           "MISO Frame: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X "
+           "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+           frame[0], frame[1], frame[2], frame[3], frame[4], frame[5], frame[6], frame[7], frame[8], frame[9],
+           frame[10], frame[11], frame[12], frame[13], frame[14], frame[15], frame[16], frame[17], frame[18],
+           frame[19]);
+  frame = MOSI_frame;
+  ESP_LOGD("MHIACCTRL",
+           "MOSI Frame: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X "
+           "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+           frame[0], frame[1], frame[2], frame[3], frame[4], frame[5], frame[6], frame[7], frame[8], frame[9],
+           frame[10], frame[11], frame[12], frame[13], frame[14], frame[15], frame[16], frame[17], frame[18],
+           frame[19]);
+//  ESP_LOGD(TAG, " | 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X",
+//           frame[20], frame[21], frame[22], frame[23], frame[24], frame[25], frame[26], frame[27], frame[28],
+//           frame[29], frame[30], frame[31], frame[32]);
     }
     // static time_t _defaultTimeCB(void) {
     //     // Use the synchronized time from Home Assistant
